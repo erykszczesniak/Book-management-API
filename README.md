@@ -2,13 +2,6 @@
 Overview
 This documentation outlines the REST API endpoints for managing books and authors within a Symfony application. It includes actions for creating, updating, deleting, and querying books and authors, as well as managing the relationships between them. Each book is flagged with a status indicating whether it is publicly available, and can be associated with up to three authors.
 
-# System Requirements
-PHP 8.0 or higher
-Composer for dependency management
-Symfony 7
-Doctrine ORM for Symfony
-A database system compatible with Doctrine (e.g., MySQL, PostgreSQL)
-
 
 Configuration
 Setting Up the Project
