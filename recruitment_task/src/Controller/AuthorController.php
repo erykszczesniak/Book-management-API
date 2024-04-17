@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Author;
 use App\Repository\AuthorRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,43 +13,70 @@ use Symfony\Component\Routing\Annotation\Route;
 class AuthorController extends AbstractController
 {
 
-    #[Route('/authors/search', name: 'search_authors', methods: ['GET'])]
-    public function searchAuthors(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private AuthorRepository       $authorRepository
+    )
     {
-        $searchTerm = $request->query->get('term');
+    }
 
-        if (!$searchTerm || strlen($searchTerm) < 3) {
-            return $this->json(['message' => 'Search term must be at least 3 characters long'], Response::HTTP_BAD_REQUEST);
+    #[Route('/authors/{id}', name: 'delete_author', methods: ['DELETE'])]
+    public function deleteAuthor(int $id): Response
+    {
+        $author = $this->authorRepository->find($id);
+
+        if (!$author) {
+            return new Response('Author not found', Response::HTTP_NOT_FOUND);
         }
 
-        $authorsRepository = $entityManager->getRepository(Author::class);
-        $authors = $authorsRepository->createQueryBuilder('a')
-            ->where('a.name LIKE :term')
-            ->setParameter('term', '%' . $searchTerm . '%')
+        $this->entityManager->remove($author);
+        $this->entityManager->flush();
+
+        return new Response('Author deleted successfully', Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/authors/search', name: 'search_authors', methods: ['GET'])]
+    public function searchAuthors(Request $request): Response
+    {
+        $query = $request->query->get('query');
+
+        if (!$query || strlen($query) < 3) {
+            return new Response('Query must be at least 3 characters long', Response::HTTP_BAD_REQUEST);
+        }
+
+        $authors = $this->authorRepository
+            ->createQueryBuilder('a')
+            ->where('a.name LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
             ->getQuery()
             ->getResult();
 
-        $authorsArray = array_map(function ($author) {
-            return [
+        if (empty($authors)) {
+            return new Response('No authors found', Response::HTTP_NOT_FOUND);
+        }
+
+        $formattedAuthors = [];
+        foreach ($authors as $author) {
+            $formattedAuthors[] = [
                 'id' => $author->getId(),
                 'name' => $author->getName(),
                 'country' => $author->getCountry(),
             ];
-        }, $authors);
+        }
 
-        return $this->json($authorsArray);
+        return $this->json($formattedAuthors);
     }
 
     #[Route('/author/{id}/books', name: 'author_books', methods: ['GET'])]
-    public function getAuthorBooks(int $id, AuthorRepository $authorRepository): JsonResponse
+    public function getAuthorBooks(int $id): JsonResponse
     {
-        $author = $authorRepository->find($id);
+        $authorRepository = $this->authorRepository->find($id);
 
-        if (!$author) {
+        if (!$authorRepository) {
             return $this->json(['message' => 'Author not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $books = $author->getBooks();
+        $books = $authorRepository->getBooks();
         $booksArray = [];
 
         foreach ($books as $book) {

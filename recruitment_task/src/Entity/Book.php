@@ -22,13 +22,12 @@ class Book
     private string $publisher;
 
     #[ORM\Column(type: 'integer')]
-    private int $page_count;
+    private int $pageCount;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $public;
+    private bool $isPublic;
 
     #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
-    #[ORM\JoinTable(name: 'book_author')]
     private Collection $authors;
 
     public function __construct()
@@ -89,15 +88,15 @@ class Book
      */
     public function getPageCount(): int
     {
-        return $this->page_count;
+        return $this->pageCount;
     }
 
     /**
-     * @param int $page_count
+     * @param int $pageCount
      */
-    public function setPageCount(int $page_count): void
+    public function setPageCount(int $pageCount): void
     {
-        $this->page_count = $page_count;
+        $this->pageCount = $pageCount;
     }
 
     /**
@@ -105,15 +104,15 @@ class Book
      */
     public function isPublic(): bool
     {
-        return $this->public;
+        return $this->isPublic;
     }
 
     /**
-     * @param bool $public
+     * @param bool $isPublic
      */
-    public function setPublic(bool $public): void
+    public function setIsPublic(bool $isPublic): void
     {
-        $this->public = $public;
+        $this->isPublic = $isPublic;
     }
 
     /**
@@ -150,5 +149,6 @@ class Book
 
         return $this;
     }
+
 
 }
