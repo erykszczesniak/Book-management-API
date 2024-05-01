@@ -1,18 +1,9 @@
 # Book Management API
 Overview
-This documentation outlines the REST API endpoints for managing books and authors within a Symfony application. It includes actions for creating, updating, deleting, and querying books and authors, as well as managing the relationships between them. Each book is flagged with a status indicating whether it is publicly available, and can be associated with up to three authors.
+This documentation outlines the REST API endpoints for managing books and authors within a Symfony application
 
 
-Configuration
-Setting Up the Project
-Clone the Repository
-Clone the project repository from GitHub to your local machine.
-
-Install Dependencies
-Navigate to your project directory and run:
-
-composer install
-This installs the necessary PHP dependencies.
+**### composer install** This installs the necessary PHP dependencies.
 
 
 # Configure the Database
@@ -33,29 +24,6 @@ php bin/console doctrine:migrations:migrate
 # Start the Symfony Server
 symfony server:start
 
-
-#  Additional Configuration Notes
-Consider setting up CORS and security features for production environments.
-
-## Entities
-
-### Book
-
-Attributes:
-
-* ID
-* Name
-* Publisher
-* Page Count
-* Public Status
-
-### Author
-
-Attributes:
-
-* ID
-* Name
-* Country
 
 ## Endpoints
 
